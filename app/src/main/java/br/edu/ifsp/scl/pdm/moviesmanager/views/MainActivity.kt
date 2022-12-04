@@ -3,12 +3,14 @@ package br.edu.ifsp.scl.pdm.moviesmanager.views
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.edu.ifsp.scl.pdm.moviesmanager.adapter.MoviesAdapter
 import br.edu.ifsp.scl.pdm.moviesmanager.controller.FilmeRoomController
+import br.edu.ifsp.scl.pdm.moviesmanager.controller.OrdenadorFilme
 import br.edu.ifsp.scl.pdm.moviesmanager.databinding.ActivityMainBinding
 import br.edu.ifsp.scl.pdm.moviesmanager.models.Filme
 import br.edu.ifsp.scl.pdm.moviesmanager.utils.Constants
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
     private lateinit var moviesAdapter: MoviesAdapter
     private lateinit var layoutManager: LinearLayoutManager
     private val moviesList: MutableList<Filme> = mutableListOf()
+    private val ordenadorFilme : OrdenadorFilme = OrdenadorFilme()
     private val amb: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -67,6 +70,13 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
             movieARL.launch(intent)
         }
 
+        amb.orderByNameBt.setOnClickListener{
+            updateFilmeList(ordenadorFilme.ordenarPorNome(moviesList.toMutableList()))
+        }
+        amb.orderByNotaBt.setOnClickListener{
+            updateFilmeList(ordenadorFilme.ordenarPorNota(moviesList.toMutableList()))
+        }
+
         filmeController.getFilmes()
     }
 
@@ -87,5 +97,13 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
         moviesList.clear()
         moviesList.addAll(_filmeList)
         moviesAdapter.notifyDataSetChanged()
+        val hideOrderButtons = moviesList.isEmpty()
+        if(hideOrderButtons){
+            amb.orderByNotaBt.visibility = View.GONE
+            amb.orderByNameBt.visibility = View.GONE
+        }else{
+            amb.orderByNotaBt.visibility = View.VISIBLE
+            amb.orderByNameBt.visibility = View.VISIBLE
+        }
     }
 }
