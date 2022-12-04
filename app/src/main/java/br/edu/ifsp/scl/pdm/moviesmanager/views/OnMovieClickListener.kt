@@ -5,5 +5,5 @@ import br.edu.ifsp.scl.pdm.moviesmanager.models.Filme
 interface OnMovieClickListener {
 
     fun onMovieClick(filme: Filme)
-    fun onMovieRemove(id: Int)
+    fun onMovieRemove(filme: Filme)
 }

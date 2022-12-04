@@ -1,6 +1,5 @@
 package br.edu.ifsp.scl.pdm.moviesmanager.views
 
-import android.graphics.Movie
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -24,7 +23,7 @@ class MovieDataActivity : AppCompatActivity() {
 
         if (mode == Modes.VIEW_OR_UPDATE) {
             val movie = intent.getParcelableExtra<Filme>(Constants.MOVIE) ?: return
-            amdb.nameEt.setText(movie.nome)
+            amdb.nameEt.setText(movie.name)
             amdb.anoEt.setText(movie.anoLancamento.toString())
             amdb.produtoraEt.setText(movie.produtora)
             amdb.duracaoEt.setText(movie.duracao.toString())
@@ -58,8 +57,8 @@ class MovieDataActivity : AppCompatActivity() {
         val nota = amdb.notaEt.text.toString().toInt()
         val genero = amdb.generoSp.selectedItem.toString()
         val movie = Filme(
-            id = -1,
-            nome = name,
+            id = null,
+            name = name,
             anoLancamento = ano,
             produtora = produtora,
             duracao = duracao,
@@ -67,7 +66,11 @@ class MovieDataActivity : AppCompatActivity() {
             nota = nota,
             genero = genero
         )
-        println(movie.nome)
+        val bundle = Bundle()
+        bundle.putParcelable(Constants.MOVIE,movie)
+        intent.putExtras(bundle)
+        setResult(RESULT_OK, intent)
+        finish()
     }
 
     private fun finishUpdate() {
@@ -82,7 +85,7 @@ class MovieDataActivity : AppCompatActivity() {
         val genero = amdb.generoSp.selectedItem.toString()
         val movie = Filme(
             id = originalMovie.id,
-            nome = name,
+            name = name,
             anoLancamento = ano,
             produtora = produtora,
             duracao = duracao,
@@ -90,11 +93,16 @@ class MovieDataActivity : AppCompatActivity() {
             nota = nota,
             genero = genero
         )
-        println(movie.nome)
+        val bundle = Bundle()
+        bundle.putParcelable(Constants.MOVIE,movie)
+        intent.putExtras(bundle)
+        setResult(RESULT_OK, intent)
+        finish()
     }
 
     private fun validateBeforeFinish(): Boolean {
         if (validateFields()) return true
+        println("Mostrar toast")
         Toast.makeText(this, getString(R.string.fill_all_fields), Toast.LENGTH_LONG).show()
         return false
     }

@@ -27,7 +27,7 @@ class MoviesAdapter(
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MoviesAdapter.MemberViewHolder, position: Int) {
         val movie = movieList[position]
-        holder.nameTv.text = movie.nome
+        holder.nameTv.text = movie.name
         holder.anoTv.text = "Lançamento: "+movie.anoLancamento
         holder.produtoraTv.text = "Produtora: "+movie.produtora
         holder.duracaoTv.text = "Duração: "+movie.duracao
@@ -37,7 +37,7 @@ class MoviesAdapter(
         holder.notaTv.text =  "Nota: "+movie.nota
         holder.generoTv.text =  "Gênero: "+movie.genero
         holder.removeImg.setOnClickListener{
-            println("Clicando so na imagem")
+            onMemberClickListener.onMovieRemove(movie)
         }
         holder.itemView.setOnClickListener{
             onMemberClickListener.onMovieClick(movie)

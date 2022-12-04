@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import br.edu.ifsp.scl.pdm.moviesmanager.adapter.MoviesAdapter
+import br.edu.ifsp.scl.pdm.moviesmanager.controller.FilmeRoomController
 import br.edu.ifsp.scl.pdm.moviesmanager.databinding.ActivityMainBinding
 import br.edu.ifsp.scl.pdm.moviesmanager.models.Filme
 import br.edu.ifsp.scl.pdm.moviesmanager.utils.Constants
@@ -18,21 +19,44 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
     private lateinit var movieARL: ActivityResultLauncher<Intent>
     private lateinit var moviesAdapter: MoviesAdapter
     private lateinit var layoutManager: LinearLayoutManager
-    private val moviesList: ArrayList<Filme> = arrayListOf(Filme(0,"Avengers",2012,"Marvel",true,10,7,"Romance"))
+    private val moviesList: MutableList<Filme> = mutableListOf()
     private val amb: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
+    }
+
+    private val filmeController: FilmeRoomController by lazy {
+        FilmeRoomController(this)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(amb.root)
+        val f = Filme(0,"Avengers",2012,"Marvel",true,10,7,"Romance")
+
         layoutManager = LinearLayoutManager(this)
         amb.movieListRv.layoutManager = layoutManager
+
         moviesAdapter = MoviesAdapter(moviesList, this)
         amb.movieListRv.adapter = moviesAdapter
+
         movieARL = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result: ActivityResult ->
             if(result.resultCode != RESULT_OK) return@registerForActivityResult
+            if (result.resultCode == RESULT_OK) {
+                val filme = result.data?.getParcelableExtra<Filme>(Constants.MOVIE)
+                filme?.let { _filme->
+                    if (_filme.id != null) {
+                        val position = moviesList.indexOfFirst { it.id == _filme.id }
+                        if (position != -1) {
+                            filmeController.editFilme(_filme)
+                        }
+                    }
+                    else {
+                        filmeController.insertFilme(_filme)
+                    }
+                }
+            }
+
 
         }
         amb.addBtn.setOnClickListener{
@@ -43,6 +67,7 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
             movieARL.launch(intent)
         }
 
+        filmeController.getFilmes()
     }
 
     override fun onMovieClick(filme: Filme) {
@@ -54,6 +79,13 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
         movieARL.launch(intent)
     }
 
-    override fun onMovieRemove(id: Int) {
+    override fun onMovieRemove(filme: Filme) {
+        filmeController.removeFilme(filme)
+    }
+
+    fun updateFilmeList(_filmeList: MutableList<Filme>) {
+        moviesList.clear()
+        moviesList.addAll(_filmeList)
+        moviesAdapter.notifyDataSetChanged()
     }
 }
