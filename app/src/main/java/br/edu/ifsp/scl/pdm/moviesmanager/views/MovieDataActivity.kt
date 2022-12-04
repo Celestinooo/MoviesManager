@@ -2,6 +2,7 @@ package br.edu.ifsp.scl.pdm.moviesmanager.views
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import br.edu.ifsp.scl.pdm.moviesmanager.R
 import br.edu.ifsp.scl.pdm.moviesmanager.databinding.ActivityMovieDataBinding
@@ -19,6 +20,17 @@ class MovieDataActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(amdb.root)
 
+        amdb.assistidoCb.setOnCheckedChangeListener { compoundButton, b ->
+            if(!b) {
+                amdb.notaEt.visibility = View.GONE
+                amdb.notaTvForm.visibility = View.GONE
+            }
+            else {
+                amdb.notaEt.visibility = View.VISIBLE
+                amdb.notaTvForm.visibility = View.VISIBLE
+            }
+        }
+
         val mode = intent.getParcelableExtra<Modes>(Constants.MODE)
 
         if (mode == Modes.VIEW_OR_UPDATE) {
@@ -28,7 +40,10 @@ class MovieDataActivity : AppCompatActivity() {
             amdb.produtoraEt.setText(movie.produtora)
             amdb.duracaoEt.setText(movie.duracao.toString())
             amdb.assistidoCb.isChecked = movie.assistido
-            amdb.notaEt.setText(movie.nota.toString())
+            val nota = movie.nota
+            if(nota != null){
+                amdb.notaEt.setText(nota.toString())
+            }
             val stringArray = resources.getStringArray(R.array.genero)
             stringArray.forEachIndexed { index, s ->
                 if (movie.genero == s) amdb.generoSp.setSelection(index)
@@ -54,7 +69,9 @@ class MovieDataActivity : AppCompatActivity() {
         val produtora = amdb.produtoraEt.text.toString()
         val duracao = amdb.duracaoEt.text.toString().toInt()
         val assistido = amdb.assistidoCb.isChecked
-        val nota = amdb.notaEt.text.toString().toInt()
+        val nota = amdb.notaEt.text.toString()
+        var notaParaAtribuir: Int? = null
+        if(nota.isNotEmpty()) notaParaAtribuir = nota.toInt()
         val genero = amdb.generoSp.selectedItem.toString()
         val movie = Filme(
             id = null,
@@ -63,7 +80,7 @@ class MovieDataActivity : AppCompatActivity() {
             produtora = produtora,
             duracao = duracao,
             assistido = assistido,
-            nota = nota,
+            nota = notaParaAtribuir,
             genero = genero
         )
         val bundle = Bundle()
@@ -81,7 +98,9 @@ class MovieDataActivity : AppCompatActivity() {
         val produtora = amdb.produtoraEt.text.toString()
         val duracao = amdb.duracaoEt.text.toString().toInt()
         val assistido = amdb.assistidoCb.isChecked
-        val nota = amdb.notaEt.text.toString().toInt()
+        val nota = amdb.notaEt.text.toString()
+        var notaParaAtribuir: Int? = null
+        if(nota.isNotEmpty()) notaParaAtribuir = nota.toInt()
         val genero = amdb.generoSp.selectedItem.toString()
         val movie = Filme(
             id = originalMovie.id,
@@ -90,7 +109,7 @@ class MovieDataActivity : AppCompatActivity() {
             produtora = produtora,
             duracao = duracao,
             assistido = assistido,
-            nota = nota,
+            nota = notaParaAtribuir,
             genero = genero
         )
         val bundle = Bundle()
@@ -102,7 +121,6 @@ class MovieDataActivity : AppCompatActivity() {
 
     private fun validateBeforeFinish(): Boolean {
         if (validateFields()) return true
-        println("Mostrar toast")
         Toast.makeText(this, getString(R.string.fill_all_fields), Toast.LENGTH_LONG).show()
         return false
     }
@@ -114,11 +132,11 @@ class MovieDataActivity : AppCompatActivity() {
         val produtora = amdb.produtoraEt.text.toString()
         val duracao = amdb.duracaoEt.text.toString()
         val nota = amdb.notaEt.text.toString()
+        if (amdb.assistidoCb.isChecked && nota.isEmpty()) return false
         if (name.isEmpty()) return false
         if (ano.isEmpty()) return false
         if (produtora.isEmpty()) return false
         if (duracao.isEmpty()) return false
-        if (nota.isEmpty()) return false
         return true
     }
 

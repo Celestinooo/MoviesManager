@@ -21,8 +21,7 @@ class Filme(
     val assistido : Boolean,
     @NonNull
     val duracao: Int,
-    @NonNull
-    val nota: Int,
+    val nota: Int?,
     @NonNull
     val genero : String
 ) : Parcelable

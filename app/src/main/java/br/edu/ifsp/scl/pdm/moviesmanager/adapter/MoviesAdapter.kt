@@ -34,7 +34,11 @@ class MoviesAdapter(
         val assistido = movie.assistido
         if(assistido) holder.assistidoTv.text = "Assistido"
         else holder.assistidoTv.text = "Não assistido"
-        holder.notaTv.text =  "Nota: "+movie.nota
+        val nota = movie.nota
+        if(nota == null) holder.notaTv.visibility = View.GONE
+        else {holder.notaTv.visibility = View.VISIBLE
+            holder.notaTv.text =  "Nota: "+ nota
+        }
         holder.generoTv.text =  "Gênero: "+movie.genero
         holder.removeImg.setOnClickListener{
             onMemberClickListener.onMovieRemove(movie)

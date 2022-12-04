@@ -97,7 +97,7 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
         moviesList.clear()
         moviesList.addAll(_filmeList)
         moviesAdapter.notifyDataSetChanged()
-        val hideOrderButtons = moviesList.isEmpty()
+        val hideOrderButtons = moviesList.size < 2
         if(hideOrderButtons){
             amb.orderByNotaBt.visibility = View.GONE
             amb.orderByNameBt.visibility = View.GONE

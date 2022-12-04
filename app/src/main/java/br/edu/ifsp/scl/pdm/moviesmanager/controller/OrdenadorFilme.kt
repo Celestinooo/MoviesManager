@@ -11,6 +11,7 @@ class OrdenadorFilme {
 
     fun ordenarPorNota(list : MutableList<Filme>): MutableList<Filme> {
         list.sortBy { it.nota }
+        list.reverse()
         return list
     }
 }
