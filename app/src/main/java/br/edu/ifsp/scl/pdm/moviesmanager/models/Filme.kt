@@ -1,6 +1,9 @@
 package br.edu.ifsp.scl.pdm.moviesmanager.models
 
-class Filme(
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize class Filme(
     val id : Int,
     val nome: String,
     val anoLancamento: Int,
@@ -9,4 +12,4 @@ class Filme(
     val duracao: Int,
     val nota: Int,
     val genero : String
-)
+) : Parcelable

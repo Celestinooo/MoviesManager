@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
     private lateinit var movieARL: ActivityResultLauncher<Intent>
     private lateinit var moviesAdapter: MoviesAdapter
     private lateinit var layoutManager: LinearLayoutManager
-    private val moviesList: ArrayList<Filme> = arrayListOf(Filme(0,"Avengers",2012,"Marvel",true,10,7,"sla"))
+    private val moviesList: ArrayList<Filme> = arrayListOf(Filme(0,"Avengers",2012,"Marvel",true,10,7,"Romance"))
     private val amb: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -45,7 +45,13 @@ class MainActivity : AppCompatActivity(), OnMovieClickListener {
 
     }
 
-    override fun onMovieClick(id: Int) {
+    override fun onMovieClick(filme: Filme) {
+        val intent = Intent(Constants.MOVIE_DATA_ACTIVITY)
+        val bundle = Bundle()
+        bundle.putParcelable(Constants.MODE, Modes.VIEW_OR_UPDATE)
+        bundle.putParcelable(Constants.MOVIE, filme)
+        intent.putExtras(bundle)
+        movieARL.launch(intent)
     }
 
     override fun onMovieRemove(id: Int) {
